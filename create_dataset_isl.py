@@ -1,0 +1,55 @@
+import os
+import pickle
+
+import mediapipe as mp
+import cv2
+
+mp_hands = mp.solutions.hands
+mp_drawing = mp.solutions.drawing_utils
+mp_drawing_styles = mp.solutions.drawing_styles
+
+hands = mp_hands.Hands(static_image_mode=True, min_detection_confidence=0.3)
+
+DATA_DIR = './ISL_images'
+
+data = []
+labels = []
+for dir_ in os.listdir(DATA_DIR):
+    for img_path in os.listdir(os.path.join(DATA_DIR, dir_)):
+        data_aux = []
+
+        x_ = []
+        y_ = []
+
+        img = cv2.imread(os.path.join(DATA_DIR, dir_, img_path))
+        img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+        results = hands.process(img_rgb)
+        if results.multi_hand_landmarks:
+            hand_data = []
+            for hand_landmarks in results.multi_hand_landmarks:
+                single_hand_data = []
+                for i in range(len(hand_landmarks.landmark)):
+                    x = hand_landmarks.landmark[i].x
+                    y = hand_landmarks.landmark[i].y
+                    x_.append(x)
+                    y_.append(y)
+                    single_hand_data.append(x)
+                    single_hand_data.append(y)
+
+                hand_data.append(single_hand_data)
+
+            # Ensure consistent shape for one or two hands
+            if len(hand_data) == 1:  # Only one hand detected
+                hand_data.append([0] * len(hand_data[0]))  # Pad with zeros for the second hand
+
+            # Flatten the hand data into a single list
+            data_aux.extend(hand_data[0])
+            data_aux.extend(hand_data[1])
+
+            data.append(data_aux)
+            labels.append(dir_)
+
+f = open('data_isl.pickle', 'wb')
+pickle.dump({'data': data, 'labels': labels}, f)
+f.close()
