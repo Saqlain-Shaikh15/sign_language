@@ -1,0 +1,1 @@
+Dataset of ISL images named from 0-35 having images named 0-99.jpg
