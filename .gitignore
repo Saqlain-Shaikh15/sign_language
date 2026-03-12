@@ -1,2 +1,6 @@
-ISL_images/
+# ignore all subfolders inside dataset
+ISL_images/*/
+
+# keep the parent folder
+!ISL_images/
 venv/
