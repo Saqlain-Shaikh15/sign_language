@@ -10,12 +10,12 @@ def home():
 
 @app.route('/isl')
 def run_isl():
-    subprocess.Popen([sys.executable, "app_isl.py"])
+    subprocess.Popen([sys.executable, "detector.py", "--mode", "isl"]) 
     return redirect(url_for('home'))
 
 @app.route('/asl')
 def run_asl():
-    subprocess.Popen([sys.executable, "app_asl.py"])
+    subprocess.Popen([sys.executable, "detector.py", "--mode", "asl"]) 
     return redirect(url_for('home'))
 
 if __name__ == '__main__':
